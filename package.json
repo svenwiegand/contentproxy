@@ -1,0 +1,25 @@
+{
+  "name": "contentproxy",
+  "version": "1.0.0",
+  "description": "Tiny helper to save authenticated and badly formatted content to pocket",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build; node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/svenwiegand/contentproxy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/svenwiegand/contentproxy/issues"
+  },
+  "homepage": "https://github.com/svenwiegand/contentproxy#readme",
+  "devDependencies": {
+    "@types/node": "^12.7.2"
+  }
+}

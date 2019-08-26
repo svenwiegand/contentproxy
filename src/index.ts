@@ -1,3 +1,5 @@
+import fetch from 'node-fetch'
+
 interface RequestEvent {
     queryStringParameters: {
         url: string
@@ -7,14 +9,16 @@ interface RequestEvent {
     }
 }
 
-export const handler = async  (event: any = {}): Promise<any> => {
-    const response = JSON.stringify(event, null, 2)
+export const handler = async (event: RequestEvent): Promise<any> => {
+    const url = event.queryStringParameters.url
+    const response = await fetch(url)
+    const html = await response.text()
     return {
         isBase64Encoded: false,
         statusCode: 200,
         headers: {
-            'Content-Type': 'text/html; charset=UTF-8'
+            'Content-Type': response.headers.get('Content-Type')
         },
-        body: '<html><head></head><body>' + event.queryStringParameters.url + '</body></html>'
+        body: html
     }
 }

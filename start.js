@@ -1,5 +1,7 @@
-const {handler} = require('./dist/index');
+const { handler } = require('./dist/index');
 const event = {
-    name: 'testevent'
+    queryStringParameters: {
+        url: 'https://wikipedia.de/'
+    }
 };
 handler(event).then(r => console.log(r));

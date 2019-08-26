@@ -1,2 +1,6 @@
 /dist
+/.idea/workspace.xml
 /node_modules
+/event.json
+/.env
+/.lambda

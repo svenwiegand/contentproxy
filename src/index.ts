@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
-import Mercury from '@postlight/mercury-parser'
+import Mercury, { ParseResult } from '@postlight/mercury-parser'
+import {LambdaResult} from './aws/lambda'
 
 interface RequestEvent {
     queryStringParameters: {
@@ -8,21 +9,29 @@ interface RequestEvent {
     }
 }
 
-export const handler = async (event: RequestEvent): Promise<any> => {
+const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
+
+export const handler = (event: RequestEvent): Promise<LambdaResult> => {
     const url = event.queryStringParameters.url
     const cookie = event.queryStringParameters.cookie
-    const headers = cookie ? { Cookie: cookie } : undefined
-    const response = await fetch(url, { headers: headers })
-    const contentType = response.headers.get('Content-Type')
-    const isHtml = contentType !== null && contentType.toLowerCase().includes('html')
-    const content = await response.text()
-    const body = isHtml ? (await Mercury.parse(url, { html: content })).content : content
+    const headers = { 'User-Agent': userAgent, Cookie: cookie }
+    return Mercury
+        .parse(url, { headers })
+        .then(result => buildLambdaResult(result))
+}
+
+function buildLambdaResult(parseResult: ParseResult): LambdaResult {
     return {
         isBase64Encoded: false,
         statusCode: 200,
         headers: {
-            'Content-Type': contentType
+            'Content-Type': 'text/html; charset=utf-8'
         },
-        body: body
+        body: buildHtml(parseResult.title, parseResult.content || '')
     }
+}
+
+function buildHtml(title: string | null, content: string): string {
+    const titleTag = title ? `<title>${title}</title>` : ''
+    return `<!DOCTYPE html>\n<html><head><meta charset="utf-8">${titleTag}</head><body>${content}</body></html>`
 }

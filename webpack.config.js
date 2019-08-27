@@ -3,6 +3,7 @@ const ZipPlugin = require('zip-webpack-plugin');
 
 module.exports = {
     entry: './src/index.ts',
+    mode: 'production',
     devtool: 'inline-source-map',
     module: {
         rules: [

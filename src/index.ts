@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import Mercury, { ParseResult } from '@postlight/mercury-parser'
-import {LambdaResult} from './aws/lambda'
+import {LambdaResult} from './aws-lambda'
 
 interface RequestEvent {
     queryStringParameters: {

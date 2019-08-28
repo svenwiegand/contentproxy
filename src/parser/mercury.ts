@@ -7,9 +7,11 @@ const langPattern = /<html .*lang="(.*)".*>/
 
 export const mercuryParser: Parser = (url: string, cookie?: string) => {
     const headers: HeadersInit = cookie ? { 'User-Agent': userAgent, Cookie: cookie } : { 'User-Agent': userAgent }
-    return fetchParser(url, cookie)
-        .then(langFrom)
-        .then(lang => parse(url, { headers: headers }).then(r => extendedParseResult(r, lang)))
+    const parseResult = parse(url, { headers: headers })
+    const langResult = fetchParser(url, cookie).then(langFrom)
+    return Promise
+        .all([parseResult, langResult])
+        .then(results => extendedParseResult(results[0], results[1]))
         .then(buildHtml)
 }
 

@@ -1,4 +1,4 @@
-import { Parser } from './parser'
+import {Parser, userAgent} from './parser'
 import { parse, ParseResult } from '@postlight/mercury-parser'
 import {fetchParser} from './fetch'
 
@@ -6,8 +6,10 @@ type ExtendedParseResult = ParseResult & { lang?: string }
 const langPattern = /<html .*lang="(.*)".*>/
 
 export const mercuryParser: Parser = (url: string, cookie?: string) => {
+    const headers: HeadersInit = cookie ? { 'User-Agent': userAgent, Cookie: cookie } : { 'User-Agent': userAgent }
     return fetchParser(url, cookie)
-        .then(html => parse(url, { html: html }).then(r => extendedParseResult(html, r)))
+        .then(langFrom)
+        .then(lang => parse(url, { headers: headers }).then(r => extendedParseResult(r, lang)))
         .then(buildHtml)
 }
 
@@ -16,8 +18,8 @@ function langFrom(html: string): string | undefined {
     return match ? match[1] : undefined
 }
 
-function extendedParseResult(html: string, result: ParseResult): ExtendedParseResult {
-    return { ...result, lang: langFrom(html) }
+function extendedParseResult(result: ParseResult, lang?: string): ExtendedParseResult {
+    return { ...result, lang: lang }
 }
 
 function buildHtml(parseResult: ExtendedParseResult): string {

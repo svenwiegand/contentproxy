@@ -1,9 +1,12 @@
 import {mercuryParser} from './parser/mercury'
+import {nopParser} from './parser/nop'
+import {Parser} from './parser/Parser'
 
 interface RequestEvent {
     queryStringParameters: {
-        url: string,
-        cookie: string | undefined
+        cookie: string | undefined,
+        parser: string | undefined,
+        url: string
     }
 }
 
@@ -14,10 +17,21 @@ export interface LambdaResult {
     body: string
 }
 
+const parsers: { [key: string]: Parser | undefined } = {
+    nop: nopParser,
+    mercury: mercuryParser
+}
+
+function getParser(parserName?: string): Parser {
+    const parser = parserName ? parsers[parserName] : undefined
+    return parser ? parser : nopParser
+}
+
 export const handler = (event: RequestEvent): Promise<LambdaResult> => {
     const url = event.queryStringParameters.url
     const cookie = event.queryStringParameters.cookie
-    return mercuryParser(url, cookie).then(buildLambdaResult)
+    const parser = getParser(event.queryStringParameters.parser)
+    return parser(url, cookie).then(buildLambdaResult)
 }
 
 function buildLambdaResult(html: string): LambdaResult {

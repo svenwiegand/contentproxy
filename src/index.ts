@@ -1,5 +1,5 @@
 import {mercuryParser} from './parser/mercury'
-import {nopParser} from './parser/nop'
+import {fetchParser} from './parser/fetch'
 import {Parser} from './parser/Parser'
 
 interface RequestEvent {
@@ -18,13 +18,14 @@ export interface LambdaResult {
 }
 
 const parsers: { [key: string]: Parser | undefined } = {
-    nop: nopParser,
-    mercury: mercuryParser
+    nop: fetchParser,
+    mercury: mercuryParser,
+    yes: mercuryParser,
 }
 
 function getParser(parserName?: string): Parser {
     const parser = parserName ? parsers[parserName] : undefined
-    return parser ? parser : nopParser
+    return parser ? parser : fetchParser
 }
 
 export const handler = (event: RequestEvent): Promise<LambdaResult> => {

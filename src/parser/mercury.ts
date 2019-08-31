@@ -3,7 +3,7 @@ import { parse, ParseResult } from '@postlight/mercury-parser'
 import {fetchParser} from './fetch'
 
 type ExtendedParseResult = ParseResult & { lang?: string }
-const langPattern = /<html .*lang="(.*)".*>/
+const langPattern = /<html [^>]*lang="([^"]*)"[^>]*>/
 
 export const mercuryParser: Parser = (url: string, cookie?: string) => {
     const headers: HeadersInit = cookie ? { 'User-Agent': userAgent, Cookie: cookie } : { 'User-Agent': userAgent }

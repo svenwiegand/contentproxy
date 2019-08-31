@@ -33,7 +33,7 @@ function buildHtml(parseResult: ExtendedParseResult): string {
     const metaAuthor = metaTag('author', parseResult.author)
     const metaDate = metaTag('date', parseResult.date_published)
     const metaDescription = metaTag('description', parseResult.excerpt)
-    const metaImage = metaTag('twitter:image', parseResult.lead_image_url)
+    const metaImage = metaTag('og:image', parseResult.lead_image_url)
 
     return `<!DOCTYPE html>
         ${htmlTag}

@@ -18,9 +18,10 @@ export interface LambdaResult {
 }
 
 const parsers: { [key: string]: Parser | undefined } = {
+    no: fetchParser,
+    yes: mercuryParser,
     nop: fetchParser,
     mercury: mercuryParser,
-    yes: mercuryParser,
 }
 
 function getParser(parserName?: string): Parser {

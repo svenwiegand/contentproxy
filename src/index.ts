@@ -1,5 +1,7 @@
-import {mercuryParser} from './parser/mercury'
+import {general} from './beautify/general'
+import {load} from 'cheerio'
 import {fetchParser} from './parser/fetch'
+import {mercuryParser} from './parser/mercury'
 import {Parser} from './parser/Parser'
 
 interface RequestEvent {
@@ -33,7 +35,16 @@ export const handler = (event: RequestEvent): Promise<LambdaResult> => {
     const url = event.queryStringParameters.url
     const cookie = event.queryStringParameters.cookie
     const parser = getParser(event.queryStringParameters.parser)
-    return parser(url, cookie).then(buildLambdaResult)
+    return parser(url, cookie)
+        .then(beautify)
+        .then(buildLambdaResult)
+}
+
+function beautify(html: string): string {
+    const $ = load(html)
+    general($)
+    const beautifiedHtml = $.root().html()
+    return beautifiedHtml ? beautifiedHtml : html
 }
 
 function buildLambdaResult(html: string): LambdaResult {

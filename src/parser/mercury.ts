@@ -26,7 +26,7 @@ function extendedParseResult(result: ParseResult, lang?: string): ExtendedParseR
 
 function buildHtml(parseResult: ExtendedParseResult): string {
     const metaTag = (name: string, content: string | null): string =>
-        content ? `<meta name="${name}" content="${content.replace('"', "'")}">` : ''
+        content ? `<meta name="${name}" property="${name}" content="${content.replace('"', "'")}">` : ''
 
     const htmlTag = parseResult.lang ? `<html lang="${parseResult.lang}">` : '<html>'
     const titleTag = parseResult.title ? `<title>${parseResult.title}</title>` : ''

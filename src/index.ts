@@ -36,13 +36,17 @@ export const handler = (event: RequestEvent): Promise<LambdaResult> => {
     const cookie = event.queryStringParameters.cookie
     const parser = getParser(event.queryStringParameters.parser)
     return parser(url, cookie)
-        .then(beautify)
+        .then(html => beautify(url, html))
         .then(buildLambdaResult)
 }
 
-function beautify(html: string): string {
+function beautify(url: string, html: string): string {
     const $ = load(html)
     general($)
+    if (url.includes('www.gruene.de')) {
+        const imgUrl = $('header img').attr('src')
+        $('meta[property="og:image"]').attr('content', imgUrl)
+    }
     const beautifiedHtml = $.root().html()
     return beautifiedHtml ? beautifiedHtml : html
 }
